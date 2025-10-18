@@ -1,15 +1,10 @@
 import sys
 import os
 sys.path.append('..')
-try:
-    import urllib.request
-except ImportError:
-    raise ImportError('Use Python3!')
 import pickle
 import numpy as np
 
 
-url_base = 'https://raw.githubusercontent.com/tomsercu/lstm/master/data/'
 key_file = {
     'train':'ptb.train.txt',
     'test':'ptb.test.txt',
@@ -22,25 +17,7 @@ save_file = {
 }
 vocab_file = 'ptb.vocab.pkl'
 
-dataset_dir = os.path.dirname(os.path.abspath(__file__))
-
-
-def _download(file_name):
-    file_path = dataset_dir + '/' + file_name
-    if os.path.exists(file_path):
-        return
-
-    print('Downloading ' + file_name + ' ... ')
-
-    try:
-        urllib.request.urlretrieve(url_base + file_name, file_path)
-    except urllib.error.URLError:
-        import ssl
-        ssl._create_default_https_context = ssl._create_unverified_context
-        urllib.request.urlretrieve(url_base + file_name, file_path)
-
-    print('Done')
-
+dataset_dir = os.path.dirname(os.path.abspath(__file__)) + '/ptb'
 
 def load_vocab():
     vocab_path = dataset_dir + '/' + vocab_file
@@ -55,8 +32,6 @@ def load_vocab():
     data_type = 'train'
     file_name = key_file[data_type]
     file_path = dataset_dir + '/' + file_name
-
-    _download(file_name)
 
     words = open(file_path).read().replace('\n', '<eos>').strip().split()
 
@@ -88,7 +63,6 @@ def load_data(data_type='train'):
 
     file_name = key_file[data_type]
     file_path = dataset_dir + '/' + file_name
-    _download(file_name)
 
     words = open(file_path).read().replace('\n', '<eos>').strip().split()
     corpus = np.array([word_to_id[w] for w in words])

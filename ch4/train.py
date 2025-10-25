@@ -2,7 +2,7 @@
 import sys
 sys.path.append('..')
 from common import config
-# GPUで実行する場合は、下記のコメントアウトを消去（要cupy）
+# 使用GPU时，取消以下注释（需要cupy）
 # ===============================================
 # config.GPU = True
 # ===============================================
@@ -16,13 +16,13 @@ from common.util import create_contexts_target, to_cpu, to_gpu
 from dataset import ptb
 
 
-# ハイパーパラメータの設定
+# 设置超参数
 window_size = 5
 hidden_size = 100
 batch_size = 100
 max_epoch = 10
 
-# データの読み込み
+# 读取数据
 corpus, word_to_id, id_to_word = ptb.load_data('train')
 vocab_size = len(word_to_id)
 
@@ -30,17 +30,17 @@ contexts, target = create_contexts_target(corpus, window_size)
 if config.GPU:
     contexts, target = to_gpu(contexts), to_gpu(target)
 
-# モデルなどの生成
+# 生成模型等
 model = CBOW(vocab_size, hidden_size, window_size, corpus)
 # model = SkipGram(vocab_size, hidden_size, window_size, corpus)
 optimizer = Adam()
 trainer = Trainer(model, optimizer)
 
-# 学習開始
+# 开始学习
 trainer.fit(contexts, target, max_epoch, batch_size)
 trainer.plot()
 
-# 後ほど利用できるように、必要なデータを保存
+# 稍后可以使用的数据保存
 word_vecs = model.word_vecs
 if config.GPU:
     word_vecs = to_cpu(word_vecs)

@@ -1,6 +1,6 @@
 # coding: utf-8
 import sys
-sys.path.append('..')  # 親ディレクトリのファイルをインポートするための設定
+sys.path.append('..')
 from common.layers import *
 from ch4.negative_sampling_layer import NegativeSamplingLoss
 
@@ -10,25 +10,25 @@ class SkipGram:
         V, H = vocab_size, hidden_size
         rn = np.random.randn
 
-        # 重みの初期化
+        # 初始化权重
         W_in = 0.01 * rn(V, H).astype('f')
         W_out = 0.01 * rn(V, H).astype('f')
 
-        # レイヤの生成
+        # 生成层
         self.in_layer = Embedding(W_in)
         self.loss_layers = []
         for i in range(2 * window_size):
             layer = NegativeSamplingLoss(W_out, corpus, power=0.75, sample_size=5)
             self.loss_layers.append(layer)
 
-        # すべての重みと勾配をリストにまとめる
+        # 将所有权重和梯度汇总到列表中
         layers = [self.in_layer] + self.loss_layers
         self.params, self.grads = [], []
         for layer in layers:
             self.params += layer.params
             self.grads += layer.grads
 
-        # メンバ変数に単語の分散表現を設定
+        # 将单词的分布表示设置为成员变量
         self.word_vecs = W_in
 
     def forward(self, contexts, target):

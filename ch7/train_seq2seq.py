@@ -11,7 +11,7 @@ from seq2seq import Seq2seq
 from peeky_seq2seq import PeekySeq2seq
 
 
-# データセットの読み込み
+# 读取数据集
 (x_train, t_train), (x_test, t_test) = sequence.load_data('addition.txt')
 char_to_id, id_to_char = sequence.get_vocab()
 
@@ -21,7 +21,7 @@ if is_reverse:
     x_train, x_test = x_train[:, ::-1], x_test[:, ::-1]
 # ================================================================
 
-# ハイパーパラメータの設定
+# 设置超参数
 vocab_size = len(char_to_id)
 wordvec_size = 16
 hidden_size = 128
@@ -52,7 +52,7 @@ for epoch in range(max_epoch):
     acc_list.append(acc)
     print('val acc %.3f%%' % (acc * 100))
 
-# グラフの描画
+# 绘制图形
 x = np.arange(len(acc_list))
 plt.plot(x, acc_list, marker='o')
 plt.xlabel('epochs')
